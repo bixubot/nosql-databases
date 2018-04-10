@@ -37,6 +37,5 @@ article_switch_vote(redis, "user:2", "article:8", "article:1")
 
 # zrange command to find "Easter egg" article
 easter_egg = redis.zrangebyscore(name="score:", min=10, max=20)
-print(easter_egg)
-#easter_egg_id = easter_egg[0].split(':')[-1]
-#print(redis.hget("article:" + easter_egg_id, "link"))
+easter_egg_id = easter_egg[0].split(':')[-1]
+print(redis.hget("article:" + easter_egg_id, "link"))
