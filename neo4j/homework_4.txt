@@ -1,0 +1,50 @@
+'''
+I'm modeling the Game of Thrones to show ten crucial characters and some of the relationships among them.
+Some are quite out of what many audience would expect and should be quite interesting to play with.
+'''
+
+# 10 characters are added as nodes
+
+CREATE (n:Stark {name: 'Jon Snow'});
+CREATE (n:Stark {name: 'Sansa Stark'});
+CREATE (n:Stark {name: 'Arya Stark'});
+CREATE (n:Targaryen {name: 'Daenerys Targaryen'});
+CREATE (n:Lannister {name: 'Cersei Lannister'});
+CREATE (n:Lannister {name: 'Jamie Lannister'});
+CREATE (n:Greyjoy {name: 'Theon Greyjoy'});
+CREATE (n:Tarly {name: 'Samwell Tarly'});
+CREATE (n:Bolton {name: 'Ramsay Bolton'});
+
+# 12 Relations are added among the nodes
+
+MATCH (a:Stark), (b:Stark) WHERE a.name = "Sansa Stark" AND b.name = "Arya Stark"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the sister of " +b.name}] -> (b);
+MATCH (a:Stark), (b:Stark) WHERE a.name = "Sansa Stark" AND b.name = "Jon Snow"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the cousin of " +b.name}] -> (b);
+MATCH (a:Stark), (b:Targaryen) WHERE a.name = "Jon Snow" AND b.name = "Daenerys Targaryen"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the lover of " +b.name}] -> (b);
+MATCH (a:Targaryen), (b:Stark) WHERE a.name = "Daenerys Targaryen" AND b.name = "Jon Snow"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the aunt of " +b.name, met: "Dragonstone"}] -> (b);
+MATCH (a:Lannister), (b:Lannister) WHERE a.name = "Cersei Lannister" AND b.name = "Jamie Lannister"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the lover of " +b.name}] -> (b);
+MATCH (a:Targaryen), (b:Lannister) WHERE a.name = "Daenerys Targaryen" AND b.name = "Tyrion Lannister"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the Queen of " +b.name, met: "Meereen"}] -> (b);
+MATCH (a:Lannister), (b:Lannister) WHERE a.name = "Cersei Lannister" AND b.name = "Tyrion Lannister"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the sister of " +b.name}] -> (b);
+MATCH (a:Lannister), (b:Lannister) WHERE a.name = "Jamie Lannister" AND b.name = "Cersei Lannister"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the brother of " +b.name}] -> (b);
+MATCH (a:Tarly), (b:Stark) WHERE a.name = "Samwell Tarly" AND b.name = "Jon Snow"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the friend of " +b.name, met: "the Wall"}] -> (b);
+MATCH (a:Stark), (b:Bolton) WHERE a.name = "Jon Snow" AND b.name = "Ramsay Bolton"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the enemy of " +b.name, met: "Winterfell"}] -> (b);
+MATCH (a:Greyjoy), (b:Bolton) WHERE a.name = "Theon Greyjoy" AND b.name = "Ramsay Bolton"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the pet of " +b.name, met: "Winterfell"}] -> (b);
+MATCH (a:Targaryen), (b:Lannister) WHERE a.name = "Daenerys Targaryen" AND b.name = "Cersei Lannister"
+CREATE (a)-[r:RELTYPE {name: a.name + " is the enemy of " +b.name, met: "the King's Landing"}] -> (b);
+
+# two subgraphs are created, each centered at Jon Snow and Tyrion Lannister.s
+
+MATCH (a {name: 'Jon Snow'}), (others)
+MATCH (a)-[r]->(others) RETURN others.name, r.name;
+MATCH (a {name: 'Tyrion Lannister'), (others)
+MATCH (a)-[r]->(others) RETURN others.name r.name;
